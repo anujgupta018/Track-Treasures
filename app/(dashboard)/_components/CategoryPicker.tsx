@@ -1,9 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandInput } from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { TransactionType } from "@/lib/Types";
 import { Category } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
+import CreateCategoryDialog from "./CreateCategoryDialog";
 
 interface Props {
   type: TransactionType;
@@ -28,10 +34,30 @@ function CategoryPicker({ type }: Props) {
           role="combobox"
           aria-expanded={open}
           className="w-[200px] justify-between"
-        ></Button>
+        >
+          {selectedCategory ? (
+            <CategoryRow category={selectedCategory} />
+          ) : (
+            "Select Category"
+          )}
+        </Button>
       </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command onSubmit={(e) => e.preventDefault()}>
+          <CommandInput placeholder="Search Category..." />
+          <CreateCategoryDialog type={type}/>
+        </Command>
+      </PopoverContent>
     </Popover>
   );
 }
 
+function CategoryRow({ category }: { category: Category }) {
+  return (
+    <div className="flex items-center gap-2">
+      <span role="img">{category.icon}</span>
+      <span>{category.name}</span>
+    </div>
+  );
+}
 export default CategoryPicker;
